@@ -1,0 +1,9 @@
+{
+  "name": "live-stream-engine",
+  "version": "1.0.0",
+  "dependencies": {
+    "express": "^4.17.1",
+    "firebase-admin": "^10.0.0",
+    "fluent-ffmpeg": "^2.1.2"
+  }
+}
