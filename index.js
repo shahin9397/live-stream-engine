@@ -1,12 +1,13 @@
 const admin = require('firebase-admin');
 const { spawn } = require('child_process');
 
-// আপনার Firebase Service Account তথ্য (এটি পরে সেটআপ করব)
-// এখন আমরা সরাসরি ডাটাবেজ কানেক্ট করছি
-const dbUrl = "https://mystreamapp-200ac-default-rtdb.firebaseio.com";
+// আপনার আপলোড করা নতুন JSON ফাইলটি কানেক্ট করা হচ্ছে
+// নিশ্চিত করুন যে গিটহাবে আপনার ফাইলের নাম 'firebase-key.json' ই আছে
+const serviceAccount = require("./firebase-key.json");
 
 admin.initializeApp({
-  databaseURL: dbUrl
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: "https://mystreamapp-200ac-default-rtdb.firebaseio.com"
 });
 
 const db = admin.database();
@@ -24,11 +25,10 @@ db.ref('liveStream/').on('value', (snapshot) => {
 
 function startStreaming(videoUrl, youtubeKey, fbKey) {
   // FFmpeg কমান্ড যা লোগো বসাবে এবং ফেসবুক-ইউটিউবে পাঠাবে
-  // ইউটিউব এবং ফেসবুকের জন্য আলাদা আউটপুট সেট করা আছে
   const args = [
     '-re', 
     '-i', videoUrl,
-    '-i', 'logo.png', // আপনার লোগো ফাইল
+    '-i', 'logo.png', // আপনার লোগো ফাইল (যদি থাকে)
     '-filter_complex', 'overlay=W-w-10:10', // ডানদিকের উপরে লোগো
     '-c:v', 'libx264', '-preset', 'veryfast', '-b:v', '3000k',
     '-maxrate', '3000k', '-bufsize', '6000k',
